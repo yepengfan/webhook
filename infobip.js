@@ -60,37 +60,31 @@ async function sendMessages(pairArray) {
 
 async function getNumberOrderPair(notifications) {
   const pairArray = [];
+
   for (const notification of notifications) {
-    const { customerId, orderId } = notification;
     const filter = {
       customAttributes: {
-        customerNumber: customerId,
+        customerNumber: notification.customerId,
       },
     };
     const encodedFilter = querystring.stringify({
       filter: JSON.stringify(filter),
     });
-
     const persons = await getPersons(baseUrl, appKey, encodedFilter);
-    console.log(JSON.stringify(persons));
 
-    const customers = persons.filter((p) => p.type === CUSTOMER_TYPE);
-    const phones = customers.flatMap((p) => p.contactInformation.phone);
-    const numbers = phones.map((obj) => obj.number);
-    console.log(numbers);
+    const arr = persons
+      .filter((p) => p.type === CUSTOMER_TYPE)
+      .flatMap((p) =>
+        p.contactInformation.phone.map((phone) => ({
+          number: phone.number,
+          orderId: notification.orderId,
+        }))
+      );
 
-    const arr = numbers.map((n) => {
-      return {
-        number: n,
-        orderId: orderId,
-      };
-    });
-
-    pairArray.push(arr);
+    pairArray.push(...arr);
   }
 
-  const flattenArray = pairArray.flat();
-  return flattenArray;
+  return pairArray;
 }
 
 async function sendNotifications(notifications) {
