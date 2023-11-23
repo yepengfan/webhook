@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("./handler");
+const app = require("./app");
 jest.mock("./Infobip");
 
 const { sendNotifications } = require("./infobip");
@@ -13,7 +13,7 @@ describe("/webapi/notification", () => {
     jest.restoreAllMocks();
   });
 
-  test("should respond with 200 for ORDER_CONFIRMATION event", async () => {
+  it("should respond with 200 for ORDER_CONFIRMATION event", async () => {
     const mockEvent = {
       event: "ORDER_CONFIRMATION",
       notifications: [
@@ -35,10 +35,12 @@ describe("/webapi/notification", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.text).toBe(JSON.stringify(mockAPIResponse));
-    expect(sendNotifications).toHaveBeenCalledWith("12345", "1010101010");
+    expect(sendNotifications).toHaveBeenCalledWith([
+      { customerId: "12345", orderId: "1010101010" },
+    ]);
   });
 
-  test("should respond with 400 for invalid event type", async () => {
+  it("should respond with 400 for invalid event type", async () => {
     const mockEvent = {
       event: "INVALID_EVENT",
       notifications: [
