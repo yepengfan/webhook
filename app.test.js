@@ -15,8 +15,9 @@ describe("/webapi/notification", () => {
 
   it("should respond with 200 for ORDER_CONFIRMATION event", async () => {
     const mockEvent = {
-      event: "ORDER_CONFIRMATION",
-      notifications: [
+      event: "order.confirmed",
+      timestamp: "2023-01-01T12:00:00Z",
+      orders: [
         {
           customerId: "12345",
           orderId: "1010101010",
@@ -30,7 +31,7 @@ describe("/webapi/notification", () => {
     sendNotifications.mockResolvedValue(mockAPIResponse);
 
     const response = await request(app)
-      .post("/webapi/notification")
+      .post("/webapi/webhook/events")
       .send(mockEvent);
 
     expect(response.statusCode).toBe(200);
@@ -43,7 +44,7 @@ describe("/webapi/notification", () => {
   it("should respond with 400 for invalid event type", async () => {
     const mockEvent = {
       event: "INVALID_EVENT",
-      notifications: [
+      orders: [
         {
           customerId: "67890",
           orderId: "vwxyz",
@@ -52,7 +53,7 @@ describe("/webapi/notification", () => {
     };
 
     const response = await request(app)
-      .post("/webapi/notification")
+      .post("/webapi/webhook/events")
       .send(mockEvent);
 
     expect(response.statusCode).toBe(400);
