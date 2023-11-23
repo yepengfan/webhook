@@ -1,5 +1,5 @@
 const express = require("express");
-const { sendNotifications } = require("./Infobip");
+const { sendNotifications } = require("./infobip");
 const app = express();
 const port = 7073;
 

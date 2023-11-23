@@ -2,7 +2,7 @@ const request = require("supertest");
 const app = require("./handler");
 jest.mock("./Infobip");
 
-const { sendNotifications } = require("./Infobip");
+const { sendNotifications } = require("./infobip");
 
 describe("/webapi/notification", () => {
   beforeEach(() => {
