@@ -26,15 +26,15 @@ async function getPersons(baseUrl, appKey, encodedFilter) {
   return response.data.persons; // TODO: iterate to the last page
 }
 
-async function sendMessages(numbers, orderId) {
-  const participants = numbers.map((n) => {
+async function sendMessages(pairArray) {
+  const participants = pairArray.map((e) => {
     return {
       identifyBy: {
-        identifier: n,
+        identifier: e.number,
         type: IDENTIFIER_TYPE,
       },
       variables: {
-        orderId: orderId,
+        orderId: e.orderId,
       },
     };
   });
@@ -58,33 +58,51 @@ async function sendMessages(numbers, orderId) {
   return response.data;
 }
 
-async function sendNotifications(customerNumber, orderId) {
-  // encode filter query parameters
-  const filter = {
-    customAttributes: {
-      customerNumber: customerNumber,
-    },
-  };
-  const encodedFilter = querystring.stringify({
-    filter: JSON.stringify(filter),
-  });
+async function getNumberOrderPair(notifications) {
+  const pairArray = [];
+  for (const notification of notifications) {
+    const { customerId, orderId } = notification;
+    const filter = {
+      customAttributes: {
+        customerNumber: customerId,
+      },
+    };
+    const encodedFilter = querystring.stringify({
+      filter: JSON.stringify(filter),
+    });
 
-  // make api call
-  const persons = await getPersons(baseUrl, appKey, encodedFilter);
-  console.log(JSON.stringify(persons));
+    const persons = await getPersons(baseUrl, appKey, encodedFilter);
+    console.log(JSON.stringify(persons));
 
-  // filter contact numbers
-  const customers = persons.filter((p) => p.type === CUSTOMER_TYPE);
-  const phones = customers.map((p) => p.contactInformation.phone);
-  const numbers = phones.flat().map((obj) => obj.number);
-  console.log(numbers);
+    const customers = persons.filter((p) => p.type === CUSTOMER_TYPE);
+    const phones = customers.flatMap((p) => p.contactInformation.phone);
+    const numbers = phones.map((obj) => obj.number);
+    console.log(numbers);
 
+    const arr = numbers.map((n) => {
+      return {
+        number: n,
+        orderId: orderId,
+      };
+    });
+
+    pairArray.push(arr);
+  }
+
+  const flattenArray = pairArray.flat();
+  return flattenArray;
+}
+
+async function sendNotifications(notifications) {
+  // prepare phone number and order id object array
+  const numberOrderPair = await getNumberOrderPair(notifications);
   // trigger notification from LINE for the seletect users
-  return sendMessages(numbers, orderId);
+  return sendMessages(numberOrderPair);
 }
 
 module.exports = {
   sendNotifications,
+  getNumberOrderPair,
   sendMessages,
   getPersons,
 };

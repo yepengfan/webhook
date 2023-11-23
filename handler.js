@@ -11,11 +11,11 @@ const EVENT_TYPE = Object.freeze({
 
 app.post("/webapi/notification", async (req, res) => {
   const { event, notifications } = req.body;
-  const { customerId, orderId } = notifications[0]; // TODO: batch processing
+  // TODO: add request schema validation
 
   if (event === EVENT_TYPE.ORDER_CONFIRMATION) {
     console.log("Order confirmation received:", req.body);
-    const response = await sendNotifications(customerId, orderId);
+    const response = await sendNotifications(notifications);
     res.status(200).send(response);
   } else {
     res.status(400).send("Invalid event type");
