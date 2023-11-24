@@ -5,12 +5,24 @@ jest.mock("./persons", () => ({
   getPersons: jest.fn((baseUrl, appKey, encodedFilter) => {
     if (
       encodedFilter ===
-      "filter=%7B%22customAttributes%22%3A%7B%22customerNumber%22%3A%2210000%22%7D%7D"
+      `filter=${encodeURIComponent(
+        JSON.stringify({
+          customAttributes: {
+            customerNumber: "10000",
+          },
+        })
+      )}`
     ) {
       return mockResponse[10000];
     } else if (
       encodedFilter ===
-      "filter=%7B%22customAttributes%22%3A%7B%22customerNumber%22%3A%2210001%22%7D%7D"
+      `filter=${encodeURIComponent(
+        JSON.stringify({
+          customAttributes: {
+            customerNumber: "10001",
+          },
+        })
+      )}`
     ) {
       return mockResponse[10001];
     }
