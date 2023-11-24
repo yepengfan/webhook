@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const querystring = require("querystring");
 const axios = require("axios");
+const personsApi = require("./persons");
 
 const baseUrl = process.env.API_BASE_URL;
 const flowUrl = process.env.FLOW_BASE_URL;
@@ -11,20 +12,6 @@ const CUSTOMER_TYPE = "CUSTOMER";
 const IDENTIFIER_TYPE = "PHONE";
 
 // TODO: catch error on async functions
-
-async function getPersons(baseUrl, appKey, encodedFilter) {
-  let config = {
-    method: "get",
-    maxBodyLength: Infinity,
-    url: `${baseUrl}/people/2/persons?${encodedFilter}`,
-    headers: {
-      Authorization: appKey,
-    },
-  };
-
-  const response = await axios.request(config);
-  return response.data.persons; // TODO: iterate to the last page
-}
 
 async function sendMessages(pairArray) {
   const participants = pairArray.map((e) => {
@@ -70,7 +57,7 @@ async function getNumberOrderPair(orders) {
     const encodedFilter = querystring.stringify({
       filter: JSON.stringify(filter),
     });
-    const persons = await getPersons(baseUrl, appKey, encodedFilter);
+    const persons = await personsApi.getPersons(baseUrl, appKey, encodedFilter);
 
     const arr = persons
       .filter((p) => p.type === CUSTOMER_TYPE)
@@ -98,5 +85,4 @@ module.exports = {
   sendNotifications,
   getNumberOrderPair,
   sendMessages,
-  getPersons,
 };
