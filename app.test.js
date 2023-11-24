@@ -13,7 +13,7 @@ describe("/webapi/webhook/events", () => {
     jest.restoreAllMocks();
   });
 
-  it("should respond with 200 for ORDER_CONFIRMATION event", async () => {
+  it("should respond with 200 for order.confirmed event", async () => {
     const mockEvent = {
       event: "order.confirmed",
       timestamp: "2023-01-01T12:00:00Z",

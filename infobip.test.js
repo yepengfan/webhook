@@ -1,6 +1,5 @@
 const infobip = require("./infobip");
 const mockResponse = require("./mockPersons");
-const personsApi = require("./persons");
 
 jest.mock("./persons", () => ({
   getPersons: jest.fn((baseUrl, appKey, encodedFilter) => {
