@@ -4,7 +4,7 @@ jest.mock("./Infobip");
 
 const { sendNotifications } = require("./infobip");
 
-describe("/webapi/notification", () => {
+describe("/webapi/webhook/events", () => {
   beforeEach(() => {
     sendNotifications.mockClear();
   });
