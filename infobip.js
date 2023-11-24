@@ -58,13 +58,13 @@ async function sendMessages(pairArray) {
   return response.data;
 }
 
-async function getNumberOrderPair(notifications) {
+async function getNumberOrderPair(orders) {
   const pairArray = [];
 
-  for (const notification of notifications) {
+  for (const order of orders) {
     const filter = {
       customAttributes: {
-        customerNumber: notification.customerId,
+        customerNumber: order.customerId,
       },
     };
     const encodedFilter = querystring.stringify({
@@ -77,7 +77,7 @@ async function getNumberOrderPair(notifications) {
       .flatMap((p) =>
         p.contactInformation.phone.map((phone) => ({
           number: phone.number,
-          orderId: notification.orderId,
+          orderId: order.orderId,
         }))
       );
 
@@ -87,9 +87,9 @@ async function getNumberOrderPair(notifications) {
   return pairArray;
 }
 
-async function sendNotifications(notifications) {
+async function sendNotifications(orders) {
   // prepare phone number and order id object array
-  const numberOrderPair = await getNumberOrderPair(notifications);
+  const numberOrderPair = await getNumberOrderPair(orders);
   // trigger notification from LINE for the seletect users
   return sendMessages(numberOrderPair);
 }
