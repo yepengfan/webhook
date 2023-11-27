@@ -65,7 +65,7 @@ describe("/webapi/webhook/events", () => {
       .send(event);
 
     expect(response.statusCode).toBe(400);
-    expect(response.text).toBe("Invalid event type");
+    expect(JSON.parse(response.text).message).toBe("Invalid event type");
   });
 
   it("should respond with 401 for invalid x-hook-signature", async () => {
@@ -94,5 +94,6 @@ describe("/webapi/webhook/events", () => {
       .send(event);
 
     expect(response.statusCode).toBe(401);
+    expect(JSON.parse(response.text).message).toBe("Invalid signature");
   });
 });
