@@ -7,11 +7,12 @@ describe("signPayload", () => {
   it("should return a valid signature", () => {
     // Arrange
     const payload = {
-      event: "INVALID_EVENT",
+      event: "order.confirmed",
+      timestamp: "2023-01-01T12:00:00Z",
       orders: [
         {
-          customerId: "67890",
-          orderId: "vwxyz",
+          customerId: "12345",
+          orderId: "1010101010",
         },
       ],
     };
