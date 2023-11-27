@@ -22,7 +22,7 @@ app.post("/webapi/webhook/events", async (req, res) => {
   const expectedSignatureBuffer = Buffer.from(expectedSignature, "hex");
 
   if (signatureBuffer.length !== expectedSignatureBuffer.length) {
-    res.status(401).send("Invalid signature length");
+    res.status(401).send("Invalid signature");
     return;
   } else if (
     !crypto.timingSafeEqual(
@@ -30,7 +30,7 @@ app.post("/webapi/webhook/events", async (req, res) => {
       Buffer.from(expectedSignature)
     )
   ) {
-    res.status(401).send("Invalid signature!!!");
+    res.status(401).send("Invalid signature");
     return;
   }
 

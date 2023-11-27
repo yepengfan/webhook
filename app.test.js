@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("./app");
-jest.mock("./infobip");
 
+jest.mock("./infobip");
 const { sendNotifications } = require("./infobip");
 
 describe("/webapi/webhook/events", () => {
